@@ -2,11 +2,6 @@ import open3d as o3d
 from open3d import visualization, geometry
 from open3d.visualization import gui
 import numpy as np
-import random
-from PySide6 import QtWidgets, QtGui, QtCore
-import win32gui
-import sys
-import matplotlib.pyplot as plt
 import os
 from posixpath import join
 import urllib.request
