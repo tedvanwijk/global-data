@@ -158,7 +158,7 @@ class DataLoader:
 
         return colors, points
 
-    def convert_data_to_colors_one_point(self, points):
+    def convert_data_to_colors_one_point(self, points, normals, radii):
         values = np.array([])
         points_to_be_deleted = []
         min_value = None
@@ -225,5 +225,7 @@ class DataLoader:
         points_to_be_deleted.reverse()
         for i in points_to_be_deleted:
             points.pop(i)
+            normals.pop(i)
+            radii.pop(i)
 
-        return colors, points
+        return colors, points, normals, radii

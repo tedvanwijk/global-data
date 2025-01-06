@@ -313,6 +313,8 @@ class GlobalData:
 
         points, colors, normals, radii = self.mesh_generator.generate_sphere_points(1, self.SPHERE_SAMPLES)
         self.data_points_list = points
+        self.radii_list = radii
+        self.normal_list = normals
 
         points = o3d.utility.Vector3dVector(points)
         colors = o3d.utility.Vector3dVector(colors)
@@ -330,15 +332,17 @@ class GlobalData:
 
     def __create_data_map(self, file_path):
         self.data_loader.load_file(file_path)
-        colors, points = self.data_loader.convert_data_to_colors_one_point(self.data_points_list)
+        colors, points, normals, radii = self.data_loader.convert_data_to_colors_one_point(self.data_points_list, self.normal_list, self.radii_list)
         self._scale_param_label.text = self.data_loader.name
         self._scale_lower_label.text = f'{self.data_loader.min_value} {self.data_loader.unit}'
         self._scale_upper_label.text = f'{self.data_loader.max_value} {self.data_loader.unit}'
         
         self.data_points.colors = o3d.utility.Vector3dVector(colors)
         self.data_points.points = o3d.utility.Vector3dVector(points)
+        self.data_points.normals = o3d.utility.Vector3dVector(normals)
+        # radii = o3d.utility.Vector3dVector(radii)
 
-        # mesh = geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, radii)
+        # mesh = geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(self.data_points, radii)
         mesh = geometry.TriangleMesh.create_from_point_cloud_alpha_shape(self.data_points, 1000)
         # mesh = geometry.TriangleMesh.create_from_point_cloud_poisson(self.data_points)[0]
 
