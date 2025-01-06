@@ -1,3 +1,5 @@
 /downloaded_data/*
 /__pycache__
 /global-data-env
+/build
+/dist

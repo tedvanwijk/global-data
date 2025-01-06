@@ -10,7 +10,7 @@ from mesh_generator import MeshGenerator
 from data_importer import DataImporter
 
 class GlobalData:
-    SPHERE_SAMPLES = 50000
+    SPHERE_SAMPLES = 10000
     GLOBE_RADIUS = 0.995
     STAR_SAMPLES = 1000
     STAR_RADIUS = 10
@@ -335,7 +335,7 @@ class GlobalData:
         self.data_points.colors = o3d.utility.Vector3dVector(colors)
         self.data_points.points = o3d.utility.Vector3dVector(points)
         self.data_points.normals = o3d.utility.Vector3dVector(normals)
-        # radii = o3d.utility.Vector3dVector(radii)
+        # radii = o3d.utility.DoubleVector(radii)
 
         # mesh = geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(self.data_points, radii)
         mesh = geometry.TriangleMesh.create_from_point_cloud_alpha_shape(self.data_points, 1000)

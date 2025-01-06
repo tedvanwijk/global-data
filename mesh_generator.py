@@ -13,6 +13,8 @@ class MeshGenerator:
         radii = []
         phi = np.pi * (np.sqrt(5.) - 1.)  # golden angle in radians
 
+        sample_radius = sphere_radius / (np.sqrt(point_count))
+
         for i in range(point_count):
             y = sphere_radius - (i / float(point_count - 1)) * (2 * sphere_radius)  # y goes from 1 to -1
             radius = np.sqrt(sphere_radius - y * y)  # radius at y
@@ -32,7 +34,7 @@ class MeshGenerator:
             points.append((x, y, z))
             colors.append((min(x_norm, 0), min(y_norm, 0), min(z_norm, 0)))
             normals.append((x_norm, y_norm, z_norm))
-            radii.append(1)
+            radii.append(sample_radius)
 
         return points, colors, normals, radii
     
