@@ -15,7 +15,7 @@ from mesh_generator import MeshGenerator
 from data_importer import DataImporter
 
 class GlobalData:
-    SPHERE_SAMPLES = 10000
+    SPHERE_SAMPLES = 50000
     GLOBE_RADIUS = 0.995
     STAR_SAMPLES = 1000
     STAR_RADIUS = 10
@@ -186,7 +186,7 @@ class GlobalData:
         self._menu.add_child(opacity_slider_layout)
         
     def __create_scale(self):
-        self._scale = gui.ImageWidget('./images/scale.jpg')
+        self._scale = gui.ImageWidget('./images/scale_2.jpg')
         self._scale.ui_image.scaling = gui.UIImage.Scaling.ANY
 
         self._scale_param_label = gui.Label('')

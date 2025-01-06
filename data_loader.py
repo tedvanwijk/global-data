@@ -208,9 +208,18 @@ class DataLoader:
 
         colors = np.array([]).reshape(0, 3)
         for val in values:
-            r = val
-            g = 0
-            b = 1 - val
+            # r = val
+            # g = 0
+            # b = 1 - val
+            if val < 0.5:
+                r = 0
+                g = val * 2
+                b = -2 * (x - 0.5)
+            else:
+                r = 2 * (val - 0.5)
+                g = -2*(val - 2) - 2
+                b = 0
+            
             colors = np.vstack([colors, np.array([r, g, b])])
 
         points_to_be_deleted.reverse()
