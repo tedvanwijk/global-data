@@ -160,7 +160,7 @@ class GlobalData:
         self._menu.add_child(dataset_layout)
 
         # sun slider
-        sun_slider_layout = gui.Horiz(0, self.margins)
+        sun_slider_layout = gui.Vert(0, self.margins)
 
         sun_slider = gui.Slider(gui.Slider.INT)
         sun_slider.set_limits(0, 360)
@@ -173,7 +173,7 @@ class GlobalData:
         self._menu.add_child(sun_slider_layout)
 
         # opacity slider
-        opacity_slider_layout = gui.Horiz(0, self.margins)
+        opacity_slider_layout = gui.Vert(0, self.margins)
 
         opacity_slider = gui.Slider(gui.Slider.DOUBLE)
         opacity_slider.set_limits(0, 1)
