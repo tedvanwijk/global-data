@@ -15,7 +15,7 @@ class DataLoader:
     LAT_RANGE = np.pi
     LON_RANGE = 2 * np.pi
 
-    def __init__(self, sample_count, sample_sphere_radius):
+    def __init__(self, sample_count):
         super(DataLoader, self).__init__()
         self.data_file = None
         self.variable_name = None
@@ -24,10 +24,9 @@ class DataLoader:
         self.lon_length = None
         self.lat = None
         self.lat_length = None
-        self.sample_sphere_radius = sample_sphere_radius
 
         # describes the angle of the approximate circle a single sample point covers
-        self.sample_arc = np.arcsin(2 * sample_sphere_radius / np.sqrt(sample_count))
+        self.sample_arc = np.arcsin(2 / np.sqrt(sample_count))
 
     def load_file(self, file_name):
         if file_name == '':
@@ -80,7 +79,7 @@ class DataLoader:
             z = p[2]
 
             # calculate lat and lon for sample point
-            lat = np.arcsin(y / self.sample_sphere_radius)
+            lat = np.arcsin(y)
             lon = np.arctan2(z, x)
 
             # calculate index of sample point in data array
@@ -174,7 +173,7 @@ class DataLoader:
             z = p[2]
 
             # calculate lat and lon for sample point
-            lat = np.arcsin(y / self.sample_sphere_radius)
+            lat = np.arcsin(y)
             lon = np.arctan2(z, x)
 
             # calculate index of sample point in data array

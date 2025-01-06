@@ -16,7 +16,7 @@ from data_importer import DataImporter
 
 class GlobalData:
     SPHERE_SAMPLES = 10000
-    SPHERE_RADIUS = 1.005
+    GLOBE_RADIUS = 0.995
     STAR_SAMPLES = 1000
     STAR_RADIUS = 10
     SUN_DISTANCE = 11
@@ -33,7 +33,7 @@ class GlobalData:
         self.window = gui.Application.instance.create_window("Wereldverkenner", 1280, 720)
 
         # initiate external classes
-        self.data_loader = DataLoader(self.SPHERE_SAMPLES, self.SPHERE_RADIUS)
+        self.data_loader = DataLoader(self.SPHERE_SAMPLES)
         self.mesh_generator = MeshGenerator()
         self.data_importer = DataImporter()
 
@@ -63,7 +63,7 @@ class GlobalData:
         cameraLocation = [-4, 0, 0]
 
         # Create mesh
-        globeMesh = geometry.TriangleMesh.create_sphere(create_uv_map=True)
+        globeMesh = geometry.TriangleMesh.create_sphere(create_uv_map=True, radius=self.GLOBE_RADIUS)
         globeMesh.compute_vertex_normals()
         globeMesh.translate(globeLocation)
         rotMatrix = geometry.get_rotation_matrix_from_xyz([np.pi/2, 0, 0])
@@ -311,7 +311,7 @@ class GlobalData:
         mat.shader = "defaultUnlitTransparency"
         self.data_map_mat = mat
 
-        points, colors, normals, radii = self.mesh_generator.generate_sphere_points(self.SPHERE_RADIUS, self.SPHERE_SAMPLES)
+        points, colors, normals, radii = self.mesh_generator.generate_sphere_points(1, self.SPHERE_SAMPLES)
         self.data_points_list = points
 
         points = o3d.utility.Vector3dVector(points)
