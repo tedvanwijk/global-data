@@ -3,6 +3,9 @@ import math
 import random
 
 class MeshGenerator:
+    LAT_RANGE = np.pi
+    LON_RANGE = 2 * np.pi
+
     def __init__(self):
         super(MeshGenerator, self).__init__()
 
@@ -38,6 +41,26 @@ class MeshGenerator:
 
         return points, colors, normals, radii
     
+    def generate_lat_lon_index_factors(self, points):
+        lat_index_factors = []
+        lon_index_factors = []
+        for p in points:
+            x = p[0] * -1
+            y = p[1]
+            z = p[2]
+
+            # calculate lat and lon for sample point
+            lat = np.arcsin(y)
+            lon = np.arctan2(z, x)
+
+            # calculate index of sample point in data array
+            lat_index_factor = lat / self.LAT_RANGE + 0.5
+            lon_index_factor = lon / self.LON_RANGE + 0.5
+
+            lat_index_factors.append(lat_index_factor)
+            lon_index_factors.append(lon_index_factor)
+        return lat_index_factors, lon_index_factors
+
     def generate_random_sphere_points(self, sphere_radius, point_count):
         points = []
         colors = []

@@ -153,41 +153,24 @@ class DataLoader:
 
         return colors, points
 
-    def convert_data_to_colors_one_point(self, points, normals, radii):
+    def convert_data_to_colors_one_point(self, points, lat_index_factors, lon_index_factors):
         values = np.array([])
-        points_to_be_deleted = []
         min_value = None
         max_value = None
         for i in range(len(points)):
-            # print(f'point {i}')
-            p = points[i]
-            x = p[0]
-            # lon = 0 is at x = -1. Flip x coord for calcs
-            x *= -1
-            y = p[1]
-            z = p[2]
+            lat_index = np.round(lat_index_factors[i] * self.lat_length)
+            lon_index = np.round(lon_index_factors[i] * self.lon_length)
 
-            # calculate lat and lon for sample point
-            lat = np.arcsin(y)
-            lon = np.arctan2(z, x)
+            # check if indices are out of range
+            if lat_index >= self.lat_length:
+                lat_index = self.lat_length - 1
+            if lon_index >= self.lon_length:
+                lon_index = self.lon_length - 1
 
-            # calculate index of sample point in data array
-            lat_middle_index = np.round(lat / self.LAT_RANGE * self.lat_length + self.lat_length / 2)
-            lon_middle_index = np.round(lon / self.LON_RANGE * self.lon_length + self.lon_length / 2)
+            # get value for point
+            value = self.data[int(lat_index)][int(lon_index)]
 
-            # print(f'point {i} lat {lat / np.pi * 180} lon {lon / np.pi * 180} lat index {lat_middle_index} lon index {lon_middle_index}')
-
-            if lat_middle_index >= self.lat_length:
-                lat_middle_index = self.lat_length - 1
-            if lon_middle_index >= self.lon_length:
-                lon_middle_index = self.lon_length - 1
-
-            value = self.data[int(lat_middle_index)][int(lon_middle_index)]
-
-            if math.isnan(value):
-                points_to_be_deleted.append(i)
-                continue
-
+            # check if value is new min or max
             if min_value == None or value < min_value:
                 min_value = value
 
@@ -201,26 +184,21 @@ class DataLoader:
         self.max_value = max_value
         self.min_value = min_value
 
-        colors = np.array([]).reshape(0, 3)
+        # create colors
+        colors = []
         for val in values:
-            # r = val
-            # g = 0
-            # b = 1 - val
-            if val < 0.5:
+            if math.isnan(val):
+                r = 0
+                g = 0
+                b = 0
+            elif val < 0.5:
                 r = 0
                 g = val * 2
-                b = -2 * (x - 0.5)
+                b = -2 * (val - 0.5)
             else:
                 r = 2 * (val - 0.5)
                 g = -2*(val - 2) - 2
                 b = 0
             
-            colors = np.vstack([colors, np.array([r, g, b])])
-
-        points_to_be_deleted.reverse()
-        for i in points_to_be_deleted:
-            points.pop(i)
-            normals.pop(i)
-            radii.pop(i)
-
-        return colors, points, normals, radii
+            colors.append([r, g, b])
+        return colors

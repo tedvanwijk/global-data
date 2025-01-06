@@ -10,7 +10,7 @@ from mesh_generator import MeshGenerator
 from data_importer import DataImporter
 
 class GlobalData:
-    SPHERE_SAMPLES = 10000
+    SPHERE_SAMPLES = 100000
     GLOBE_RADIUS = 0.995
     STAR_SAMPLES = 1000
     STAR_RADIUS = 10
@@ -310,39 +310,41 @@ class GlobalData:
         self.data_points_list = points
         self.radii_list = radii
         self.normal_list = normals
+        self.color_list = colors
 
         points = o3d.utility.Vector3dVector(points)
-        colors = o3d.utility.Vector3dVector(colors)
         normals = o3d.utility.Vector3dVector(normals)
-        radii = o3d.utility.DoubleVector(radii)
 
         pcd = o3d.geometry.PointCloud(points) 
-        pcd.colors = colors
         pcd.normals = normals
 
         self.data_points = pcd
 
+        self._mesh = geometry.TriangleMesh.create_from_point_cloud_alpha_shape(self.data_points, 1000)
+        
+        lat_index_factors, lon_index_factors = self.mesh_generator.generate_lat_lon_index_factors(np.asarray(self._mesh.vertices))
+
+        self.lat_index_factors = lat_index_factors
+        self.lon_index_factors = lon_index_factors
+
     def __delete_data_map(self):
         self._scene.scene.remove_geometry('data_map')
+        pass
 
     def __create_data_map(self, file_path):
+        # load new file and convert to colors
         self.data_loader.load_file(file_path)
-        colors, points, normals, radii = self.data_loader.convert_data_to_colors_one_point(self.data_points_list, self.normal_list, self.radii_list)
+        colors = self.data_loader.convert_data_to_colors_one_point(np.asarray(self._mesh.vertices), self.lat_index_factors, self.lon_index_factors)
+
+        # set label text
         self._scale_param_label.text = self.data_loader.name
         self._scale_lower_label.text = f'{self.data_loader.min_value} {self.data_loader.unit}'
         self._scale_upper_label.text = f'{self.data_loader.max_value} {self.data_loader.unit}'
-        
-        self.data_points.colors = o3d.utility.Vector3dVector(colors)
-        self.data_points.points = o3d.utility.Vector3dVector(points)
-        self.data_points.normals = o3d.utility.Vector3dVector(normals)
-        # radii = o3d.utility.DoubleVector(radii)
-
-        # mesh = geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(self.data_points, radii)
-        mesh = geometry.TriangleMesh.create_from_point_cloud_alpha_shape(self.data_points, 1000)
-        # mesh = geometry.TriangleMesh.create_from_point_cloud_poisson(self.data_points)[0]
-
-        self._scene.scene.add_geometry('data_map', mesh, self.data_map_mat)
-        # self._scene.scene.add_geometry('data_map', self.data_points, self.data_map_mat)
+    
+        # remove mesh, update colors and add mesh
+        self._scene.scene.remove_geometry('data_map')
+        self._mesh.vertex_colors = o3d.utility.Vector3dVector(colors)
+        self._scene.scene.add_geometry('data_map', self._mesh, self.data_map_mat)
 
     def __plot_stars(self):
         mat = visualization.rendering.MaterialRecord()
